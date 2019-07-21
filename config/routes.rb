@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'api_constraints'
 
 Rails.application.routes.draw do
@@ -5,9 +7,19 @@ Rails.application.routes.draw do
 
   scope module: :api, defaults: { format: :json }, path: 'api' do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
-      resources :j, controller: 'jets', only: [:create, :update, :show, :destroy] do
-        namespace :comments do
-          resources :posts, path: '', param: :hashid, only: [:create, :update, :show, :destroy]
+      resources :jets, only: %i[create update show destroy] do
+        resources :posts, param: :hash_id, only: %i[create update show destroy] do
+          member do
+            put 'upvote', to: 'posts#upvote'
+            put 'downvote', to: 'posts#downvote'
+          end
+
+          resources :comments, param: :hash_id, only: %i[create update destroy] do
+            member do
+              put 'upvote', to: 'comments#upvote'
+              put 'downvote', to: 'comments#downvote'
+            end
+          end
         end
       end
     end

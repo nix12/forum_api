@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Api::V1::JetsController < ApplicationController
   def create
     jet = Jet.new(jet_params)
@@ -8,7 +10,7 @@ class Api::V1::JetsController < ApplicationController
       render json: { error: errors }, status: :unprocessable_entity
     end
   end
-  
+
   def show
     jet = Jet.friendly.find(params[:id])
     posts = jet.posts
@@ -16,13 +18,11 @@ class Api::V1::JetsController < ApplicationController
     render json: posts, status: :ok
   end
 
-  def update
-  end
+  def update; end
 
-  def destroy
-  end
+  def destroy; end
 
-private
+  private
 
   def jet_params
     params.require(:jet).permit(:name)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_12_043516) do
+ActiveRecord::Schema.define(version: 2019_07_19_124400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,10 +19,12 @@ ActiveRecord::Schema.define(version: 2019_07_12_043516) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "post_id"
+    t.string "commentable_id"
     t.string "commentable_type"
-    t.bigint "commentable_id"
-    t.bigint "post_id"
-    t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
+    t.string "hash_id"
+    t.index ["commentable_id"], name: "index_comments_on_commentable_id"
+    t.index ["hash_id"], name: "index_comments_on_hash_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
   end
 
@@ -50,10 +52,33 @@ ActiveRecord::Schema.define(version: 2019_07_12_043516) do
     t.text "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "jet_id"
+    t.string "jet_id"
+    t.string "hash_id"
+    t.index ["hash_id"], name: "index_posts_on_hash_id"
     t.index ["jet_id"], name: "index_posts_on_jet_id"
   end
 
-  add_foreign_key "comments", "posts"
-  add_foreign_key "posts", "jets"
+  create_table "votes", id: :serial, force: :cascade do |t|
+    t.string "votable_type"
+    t.integer "votable_id"
+    t.string "voter_type"
+    t.integer "voter_id"
+    t.boolean "vote_flag"
+    t.string "vote_scope"
+    t.integer "vote_weight"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["votable_id", "votable_type", "vote_scope"], name: "index_votes_on_votable_id_and_votable_type_and_vote_scope"
+    t.index ["voter_id", "voter_type", "vote_scope"], name: "index_votes_on_voter_id_and_voter_type_and_vote_scope"
+  end
+
+  create_table "voting_sessions", force: :cascade do |t|
+    t.string "voter_id"
+    t.string "post_id"
+    t.string "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["voter_id"], name: "index_voting_sessions_on_voter_id"
+  end
+
 end

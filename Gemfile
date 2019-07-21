@@ -29,7 +29,10 @@ gem 'bootsnap', '>= 1.1.0', require: false
 gem 'rack-cors'
 
 gem 'friendly_id'
-gem 'hashid-rails'
+
+gem 'acts_as_votable', '~> 0.12.0'
+
+gem 'jwt'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
