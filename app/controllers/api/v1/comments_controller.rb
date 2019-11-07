@@ -1,10 +1,19 @@
+# frozen_string_literal: true
+
 class Api::V1::CommentsController < ApplicationController
   def create
-    comment = Comment.new(comment_params)
+    if params[:comment][:parent_id]
+      parent = Comment.find_by(hash_id: params[:comment][:parent_id])
+      comment = parent.children.new(comment_params)
+      comment.parent_id = parent.hash_id
+    else
+      comment = Comment.new(comment_params)
+    end
+
+    comment.author = current_user
 
     if comment.save
-      voter = VotingSession.create(voter_id: current_user.username, comment_id: comment.hash_id)
-      comment.upvote_by voter
+      comment.upvote_by current_user
       render json: comment, status: :created
     else
       render json: { errors: comment.errors }, status: :unprocessable_entity
@@ -12,33 +21,35 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def update
-    comment = Comment.find(comment_params)
+    comment = Comment.friendly.find(params[:hash_id])
 
-    if comment.save
+    if comment.update_attributes(comment_params)
       render json: comment, status: :no_content
     else
-      render json: {error: 'Comment update failed.'}, status: :internal_server_error
+      render json: { errors: comment.errors }, status: :internal_server_error
     end
   end
 
-  def destroy
-  end
+  def destroy; end
 
   def upvote
     comment = Comment.friendly.find(params[:hash_id])
-    voter = VotingSession.where(voter_id: current_user.username, comment_id: comment.hash_id).first_or_create
-    comment.upvote_by voter
+    comment.upvote_by current_user
   end
 
   def downvote
     comment = Comment.friendly.find(params[:hash_id])
-    voter = VotingSession.where(voter_id: current_user.username, comment_id: comment.hash_id).first_or_create
-    comment.downvote_by voter
+    comment.downvote_by current_user
   end
 
-private
+  def unvote
+    comment = Comment.friendly.find(params[:hash_id])
+    comment.unvote_by current_user
+  end
+
+  private
 
   def comment_params
-    params.require(:comment).permit(:body, :post_id, :commentable_id, :commentable_type)
+    params.require(:comment).permit(:body, :post_id, :commentable_id, :commentable_type, :parent_id)
   end
 end

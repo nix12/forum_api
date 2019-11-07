@@ -1,54 +1,91 @@
-class Api::V1::PostsController < ApplicationController
-  def create
-    post = Post.new(post_params)
+# frozen_string_literal: true
 
-    if post.save
-      voter = VotingSession.create(voter_id: current_user.username, post_id: post.hash_id)
-      post.upvote_by voter
-      render json: post, status: :created
+class Api::V1::PostsController < ApplicationController
+  before_action :set_post, except: %i[index create show]
+  before_action :update_rules, only: %i[create show]
+
+  def index
+    @posts = Post.all
+
+    render json: @posts, status: :ok
+  end
+
+  def create
+    @post = Post.new(post_params)
+    @post.author = current_user
+
+    if @post.save
+      @post.upvote_by current_user
+      render json: @post, status: :created
     else
-      render json: { errors: post.errors }, status: :unprocessable_entity
+      render json: { errors: @post.errors }, status: :unprocessable_entity
     end
   end
 
   def show
-    post = Post.friendly.find(params[:id])
-    comments = Comment.where('post_id = ?', post.id).order(:id, commentable_id: :asc)
+    if current_user
+      JSON.parse(current_user.rules).each do |rule|
+        next unless rule['actions'][0] == 'manage' &&
+                    rule['subject'][0] == 'Post'
 
-    render json: {
-      post: post,
-      comments: comments
-    }, status: :ok
+        @post = Post.with_deleted.friendly.find(params[:hash_id])
+
+        render json: {
+          post: @post,
+          comments: nested_comments(@post)
+        }, status: :ok
+      end
+    else
+      @post = Post.friendly.find(params[:hash_id])
+
+      render json: {
+        post: @post,
+        comments: nested_comments(@post)
+      }, status: :ok
+    end
   end
 
   def update
-    post = Post.find(post_params)
-
-    if post.save
-      render json: post, status: :no_content
+    if @post.update_attributes(post_params)
+      render json: @post, status: :no_content
     else
-      render json: {errors: 'Post update failed.'}, status: :internal_server_error
+      render json: { errors: @post.errors }, status: :internal_server_error
     end
   end
 
   def destroy
+    @post.destroy if @post.present?
   end
 
   def upvote
-    post = Post.friendly.find(params[:hash_id])
-    voter = VotingSession.where(voter_id: current_user.username, post_id: post.hash_id).first_or_create
-    post.upvote_by voter
+    @post.upvote_by current_user
   end
 
   def downvote
-    post = Post.friendly.find(params[:hash_id])
-    voter = VotingSession.where(voter_id: current_user.username, post_id: post.hash_id).first_or_create
-    post.downvote_by voter
+    @post.downvote_by current_user
   end
 
-private
+  def unvote
+    @post.unvote_by current_user
+  end
+
+  private
+
+  def set_post
+    @post = Post.friendly.find(params[:hash_id])
+  end
 
   def post_params
     params.require(:post).permit(:title, :body, :jet_id)
+  end
+
+  def nested_comments(post)
+    comments = []
+
+    post.comments.map do |comments_branch|
+      comments << comments_branch.subtree.arrange_serializable(order: :cached_votes_score)
+    end
+
+    comments
   end
 end

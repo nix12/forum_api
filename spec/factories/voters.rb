@@ -1,6 +1,6 @@
 FactoryBot.define do
-  factory :voting_session do
-    voter_id { "MyString" }
+  factory :voter do
+    username { "MyString" }
     post_id { "MyString" }
     comment_id { "MyString" }
   end

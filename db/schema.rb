@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_19_124400) do
+ActiveRecord::Schema.define(version: 2019_10_08_201740) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,9 +23,16 @@ ActiveRecord::Schema.define(version: 2019_07_19_124400) do
     t.string "commentable_id"
     t.string "commentable_type"
     t.string "hash_id"
+    t.string "voter_id"
+    t.integer "cached_votes_score", default: 0
+    t.string "ancestry"
+    t.integer "ancestry_depth", default: 0
+    t.integer "position"
+    t.index ["ancestry"], name: "index_comments_on_ancestry"
     t.index ["commentable_id"], name: "index_comments_on_commentable_id"
     t.index ["hash_id"], name: "index_comments_on_hash_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["voter_id"], name: "index_comments_on_voter_id"
   end
 
   create_table "friendly_id_slugs", force: :cascade do |t|
@@ -44,6 +51,8 @@ ActiveRecord::Schema.define(version: 2019_07_19_124400) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug"
+    t.string "voter_id"
+    t.text "description"
     t.index ["slug"], name: "index_jets_on_slug", unique: true
   end
 
@@ -54,15 +63,35 @@ ActiveRecord::Schema.define(version: 2019_07_19_124400) do
     t.datetime "updated_at", null: false
     t.string "jet_id"
     t.string "hash_id"
+    t.string "voter_id"
+    t.integer "cached_votes_score", default: 0
+    t.string "ancestry"
+    t.integer "comments_count", default: 0, null: false
+    t.datetime "deleted_at"
+    t.index ["ancestry"], name: "index_posts_on_ancestry"
+    t.index ["deleted_at"], name: "index_posts_on_deleted_at"
     t.index ["hash_id"], name: "index_posts_on_hash_id"
     t.index ["jet_id"], name: "index_posts_on_jet_id"
+    t.index ["voter_id"], name: "index_posts_on_voter_id"
+  end
+
+  create_table "voters", force: :cascade do |t|
+    t.string "username"
+    t.string "post_id"
+    t.string "comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "upvoted_items", default: [], array: true
+    t.text "downvoted_items", default: [], array: true
+    t.text "rules"
+    t.index ["username"], name: "index_voters_on_username"
   end
 
   create_table "votes", id: :serial, force: :cascade do |t|
     t.string "votable_type"
-    t.integer "votable_id"
+    t.string "votable_id"
     t.string "voter_type"
-    t.integer "voter_id"
+    t.string "voter_id"
     t.boolean "vote_flag"
     t.string "vote_scope"
     t.integer "vote_weight"
@@ -70,15 +99,6 @@ ActiveRecord::Schema.define(version: 2019_07_19_124400) do
     t.datetime "updated_at"
     t.index ["votable_id", "votable_type", "vote_scope"], name: "index_votes_on_votable_id_and_votable_type_and_vote_scope"
     t.index ["voter_id", "voter_type", "vote_scope"], name: "index_votes_on_voter_id_and_voter_type_and_vote_scope"
-  end
-
-  create_table "voting_sessions", force: :cascade do |t|
-    t.string "voter_id"
-    t.string "post_id"
-    t.string "comment_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["voter_id"], name: "index_voting_sessions_on_voter_id"
   end
 
 end

@@ -4,9 +4,9 @@ class Jet < ApplicationRecord
   extend FriendlyId
   friendly_id :name, use: :slugged
 
-  self.primary_key = :slug
+  has_many :posts, primary_key: 'slug', foreign_key: 'jet_id'
+  belongs_to :owner, class_name: 'Voter', foreign_key: 'voter_id'
 
-  has_many :posts, primary_key: 'slug'
-
-  validates :name, presence: true, length: { minimum: 3, maximum: 10 }
+  validates :name, presence: true, length: { minimum: 3, maximum: 10 },
+                   uniqueness: true
 end
