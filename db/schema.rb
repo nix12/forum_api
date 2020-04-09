@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_08_201740) do
+ActiveRecord::Schema.define(version: 2020_03_10_203713) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,6 +54,25 @@ ActiveRecord::Schema.define(version: 2019_10_08_201740) do
     t.string "voter_id"
     t.text "description"
     t.index ["slug"], name: "index_jets_on_slug", unique: true
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.string "title"
+    t.string "uri"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "jet_id"
+    t.string "hash_id"
+    t.string "voter_id"
+    t.string "ancestry"
+    t.integer "cached_votes_score", default: 0
+    t.datetime "deleted_at"
+    t.integer "comments_count", default: 0, null: false
+    t.index ["ancestry"], name: "index_links_on_ancestry"
+    t.index ["deleted_at"], name: "index_links_on_deleted_at"
+    t.index ["hash_id"], name: "index_links_on_hash_id"
+    t.index ["jet_id"], name: "index_links_on_jet_id"
+    t.index ["voter_id"], name: "index_links_on_voter_id"
   end
 
   create_table "posts", force: :cascade do |t|

@@ -10,8 +10,11 @@ class Comment < ApplicationRecord
   belongs_to :commentable, polymorphic: true
   has_many :comments, -> { order(cached_votes_score: :desc) }, as: :commentable
 
-  validates :body, length: { minimum: 1, maximum: 10_000 }
+  validates :body, presence: true, length: { minimum: 1, maximum: 10_000 }
   validates :post_id, presence: true
+  validates :commentable_id, presence: true
+  validates :commentable_type, presence: true
+  validates :parent_id, presence: true, allow_blank: true
 
   has_ancestry cache_depth: true
   acts_as_list scope: [:ancestry]

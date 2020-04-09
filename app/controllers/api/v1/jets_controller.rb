@@ -17,30 +17,30 @@ class Api::V1::JetsController < ApplicationController
     if @jet.save
       render json: @jet, status: :created
     else
-      render json: { error: @jet.errors }, status: :unprocessable_entity
+      render json: { errors: @jet.errors }, status: :unprocessable_entity
     end
   end
 
   def show
-    puts '-----'
-    puts current_user
-    puts '-----'
-    if current_user
-      puts 'REGULAR AND DELETED POSTS'
-      JSON.parse(current_user.rules).each do |rule|
-        next unless rule['actions'][0] == 'manage' &&
-                    rule['subject'][0] == 'Post'
+    # puts '-----'
+    # puts current_user
+    # puts '-----'
+    # if current_user
+    #   puts 'REGULAR AND DELETED POSTS'
+    #   JSON.parse(current_user.rules).each do |rule|
+    #     next unless rule['actions'][0] == 'manage' &&
+    #                 rule['subject'][0] == 'Post'
 
-        posts = @jet.posts.with_deleted
+    #     posts = @jet.posts.with_deleted
 
-        render json: posts, status: :ok
-      end
-    else
-      puts 'REGULAR POSTS'
-      posts = @jet.posts.without_deleted
+    #     render json: posts, status: :ok
+    #   end
+    # else
+      # puts 'REGULAR POSTS'
+      posts = Post.fetch_posts_and_links(@jet)
 
       render json: posts, status: :ok
-    end
+    # end
   end
 
   private

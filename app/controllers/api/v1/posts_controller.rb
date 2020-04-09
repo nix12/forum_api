@@ -23,26 +23,26 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def show
-    if current_user
-      JSON.parse(current_user.rules).each do |rule|
-        next unless rule['actions'][0] == 'manage' &&
-                    rule['subject'][0] == 'Post'
+    # if current_user
+    #   JSON.parse(current_user.rules).each do |rule|
+    #     next unless rule['actions'][0] == 'manage' &&
+    #                 rule['subject'][0] == 'Post'
 
-        @post = Post.with_deleted.friendly.find(params[:hash_id])
+    #     @post = Post.with_deleted.friendly.find(params[:hash_id])
 
-        render json: {
-          post: @post,
-          comments: nested_comments(@post)
-        }, status: :ok
-      end
-    else
+    #     render json: {
+    #       post: @post,
+    #       comments: nested_comments(@post)
+    #     }, status: :ok
+    #   end
+    # else
       @post = Post.friendly.find(params[:hash_id])
 
       render json: {
         post: @post,
         comments: nested_comments(@post)
       }, status: :ok
-    end
+    # end
   end
 
   def update

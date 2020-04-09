@@ -4,11 +4,11 @@ require 'jwt'
 require 'json'
 
 class ApplicationController < ActionController::API
-  def current_user
-    data = nil
+  def access_token
+    token = nil
 
-    if request.headers['HTTP_ACCESS_TOKEN']
-      data = JWT.decode(
+    unless request.headers['HTTP_ACCESS_TOKEN'].blank?
+      token = JWT.decode(
         request.headers['HTTP_ACCESS_TOKEN'],
         Rails.application.credentials.jwt_secret,
         true,
@@ -16,19 +16,18 @@ class ApplicationController < ActionController::API
       )[0]
     end
 
-    @current_user = data ? Voter.find_or_create_by(username: data['username']) : nil
+    token
+  end
+
+  def current_user
+    data = access_token
+
+    @current_user = data ? Voter.find_or_create_by(username: data['user']['username']) : nil
   end
 
   def update_rules
-    if request.headers['HTTP_ACCESS_TOKEN']
-      data = JWT.decode(
-        request.headers['HTTP_ACCESS_TOKEN'],
-        Rails.application.credentials.jwt_secret,
-        true,
-        algorithm: 'HS512'
-      )[0]
-    end
+    data = access_token
 
-    current_user&.update(rules: data['rules'].to_json)
+    current_user&.update(rules: data['user']['rules'].to_json)
   end
 end
