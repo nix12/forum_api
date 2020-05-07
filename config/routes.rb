@@ -8,11 +8,11 @@ Rails.application.routes.draw do
   scope module: :api, defaults: { format: :json }, path: 'api' do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
       resources :jets, only: %i[index create update show] do
-        resources :posts, param: :hash_id, only: %i[create update show destroy] do
+        resources :texts, param: :hash_id, only: %i[create update show destroy] do
           member do
-            put 'upvote', to: 'posts#upvote'
-            put 'downvote', to: 'posts#downvote'
-            put 'unvote', to: 'posts#unvote'
+            put 'upvote', to: 'texts#upvote'
+            put 'downvote', to: 'texts#downvote'
+            put 'unvote', to: 'texts#unvote'
           end
 
           resources :comments, param: :hash_id, only: %i[create update destroy] do

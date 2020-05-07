@@ -1,5 +1,9 @@
 class Link < ApplicationRecord
-  include Friendlyable
+  include Friendlyable, Postable
+
+  after_find do |text|
+    assign_deleted
+  end
 
   self.primary_key = 'hash_id'
 
@@ -16,5 +20,4 @@ class Link < ApplicationRecord
 
   has_ancestry
   acts_as_votable
-  acts_as_paranoid without_default_scope: true
 end

@@ -29,7 +29,7 @@ class Api::V1::JetsController < ApplicationController
     #   puts 'REGULAR AND DELETED POSTS'
     #   JSON.parse(current_user.rules).each do |rule|
     #     next unless rule['actions'][0] == 'manage' &&
-    #                 rule['subject'][0] == 'Post'
+    #                 rule['subject'][0] == 'Text'
 
     #     posts = @jet.posts.with_deleted
 
@@ -37,7 +37,7 @@ class Api::V1::JetsController < ApplicationController
     #   end
     # else
       # puts 'REGULAR POSTS'
-      posts = Post.fetch_posts_and_links(@jet)
+      posts = Text.fetch_texts_and_links(@jet)
 
       render json: posts, status: :ok
     # end

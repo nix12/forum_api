@@ -36,7 +36,6 @@ gem 'acts_as_list'
 gem 'ancestry'
 
 gem 'acts_as_votable', '~> 0.12.0'
-gem 'paranoia', '~> 2.2'
 
 gem 'jwt'
 

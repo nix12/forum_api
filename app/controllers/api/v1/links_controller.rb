@@ -24,7 +24,7 @@ class Api::V1::LinksController < ApplicationController
 
   def show
     @link = Link.friendly.find(params[:hash_id])
-
+    
     render json: {
       link: @link,
       comments: nested_comments(@link)
