@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-class Text < ApplicationRecord
-  include Friendlyable, Postable
+class Text < Post
+  include Friendlyable
+  include Postable
 
-  after_find do |text|
+  after_find do |_text|
     assign_deleted
   end
 
@@ -17,6 +18,7 @@ class Text < ApplicationRecord
 
   validates :title, presence: true, length: { minimum: 1, maximum: 100 }
   validates :body, presence: true, length: { minimum: 1, maximum: 40_000 }
+  validates :type, presence: true
   validates :author, presence: true
   validates :jet_id, presence: true
 

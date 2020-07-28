@@ -7,7 +7,7 @@ class Api::V1::JetsController < ApplicationController
   def index
     @jets = Jet.all
 
-    render json: @jets, status: :ok
+    render 'jets/index.json.jbuilder', status: :ok
   end
 
   def create
@@ -15,32 +15,16 @@ class Api::V1::JetsController < ApplicationController
     @jet.owner = current_user
 
     if @jet.save
-      render json: @jet, status: :created
+      render 'jets/create.json.jbuilder', status: :created
     else
-      render json: { errors: @jet.errors }, status: :unprocessable_entity
+      render 'jets/error.json.jbuilder', status: :unprocessable_entity
     end
   end
 
   def show
-    # puts '-----'
-    # puts current_user
-    # puts '-----'
-    # if current_user
-    #   puts 'REGULAR AND DELETED POSTS'
-    #   JSON.parse(current_user.rules).each do |rule|
-    #     next unless rule['actions'][0] == 'manage' &&
-    #                 rule['subject'][0] == 'Text'
+    @posts = Post.fetch_texts_and_links(@jet)
 
-    #     posts = @jet.posts.with_deleted
-
-    #     render json: posts, status: :ok
-    #   end
-    # else
-      # puts 'REGULAR POSTS'
-      posts = Text.fetch_texts_and_links(@jet)
-
-      render json: posts, status: :ok
-    # end
+    render 'jets/show.json.jbuilder', status: :ok
   end
 
   private

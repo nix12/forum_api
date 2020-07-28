@@ -10,21 +10,43 @@
 
 Voter.delete_all
 Jet.delete_all
-Text.delete_all
+Post.delete_all
 Comment.delete_all
 
 voter = Voter.create(username: 'test')
 
 Jet.create(
-  owner: voter,
-  name: 'test',
-  description: 'some description'
+  [{ owner: voter,
+     name: 'all',
+     description: 'some description' },
+   { owner: voter,
+     name: 'news',
+     description: 'some description' },
+   { owner: voter,
+     name: 'world',
+     description: 'some description' },
+   { owner: voter,
+     name: 'technology',
+     description: 'some description' },
+   { owner: voter,
+     name: 'videos',
+     description: 'some description' },
+   { owner: voter,
+     name: 'gifs',
+     description: 'some description' },
+   { owner: voter,
+     name: 'gaming',
+     description: 'some description' },
+   { owner: voter,
+     name: 'pics',
+     description: 'some description' }]
 )
 
-text = Text.create(
+text = Post.create(
   title: 'First text',
   body: 'This is my first text',
   author: voter,
+  type: 'Text',
   jet_id: 'all'
 )
 
@@ -32,7 +54,7 @@ comment = Comment.create(
   body: 'This is a comment of the first text',
   author: voter,
   text_id: text.id,
-  commentable_type: Text,
+  commentable_type: Post,
   commentable_id: text.id,
   parent_id: nil
 )
@@ -56,7 +78,7 @@ Comment.create(
   body: 'This is a second comment of the first text',
   author: voter,
   text_id: text.id,
-  commentable_type: Text,
+  commentable_type: Post,
   commentable_id: text.id,
   parent_id: nil
 )

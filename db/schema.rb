@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_29_224303) do
+ActiveRecord::Schema.define(version: 2020_07_03_211253) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,13 +67,38 @@ ActiveRecord::Schema.define(version: 2020_04_29_224303) do
     t.string "voter_id"
     t.string "ancestry"
     t.integer "cached_votes_score", default: 0
-    t.datetime "deleted_at"
     t.integer "comments_count", default: 0, null: false
     t.index ["ancestry"], name: "index_links_on_ancestry"
-    t.index ["deleted_at"], name: "index_links_on_deleted_at"
     t.index ["hash_id"], name: "index_links_on_hash_id"
     t.index ["jet_id"], name: "index_links_on_jet_id"
     t.index ["voter_id"], name: "index_links_on_voter_id"
+  end
+
+  create_table "posts", force: :cascade do |t|
+    t.string "title"
+    t.string "jet_id"
+    t.string "hash_id"
+    t.string "voter_id"
+    t.string "ancestry"
+    t.integer "cached_votes_score", default: 0
+    t.integer "comments_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "type"
+    t.text "body"
+    t.string "uri"
+    t.index ["ancestry"], name: "index_posts_on_ancestry"
+    t.index ["hash_id"], name: "index_posts_on_hash_id"
+    t.index ["jet_id"], name: "index_posts_on_jet_id"
+    t.index ["voter_id"], name: "index_posts_on_voter_id"
+  end
+
+  create_table "saved_posts", force: :cascade do |t|
+    t.string "post_id"
+    t.string "comment_id"
+    t.string "voter_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "texts", force: :cascade do |t|

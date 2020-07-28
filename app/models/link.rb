@@ -1,7 +1,10 @@
-class Link < ApplicationRecord
-  include Friendlyable, Postable
+# frozen_string_literal: true
 
-  after_find do |text|
+class Link < Post
+  include Friendlyable
+  include Postable
+
+  after_find do |_text|
     assign_deleted
   end
 
@@ -14,7 +17,8 @@ class Link < ApplicationRecord
   serialize :rules, Hash
 
   validates :title, presence: true, length: { minimum: 1, maximum: 100 }
-  validates :uri, presence: true, length: { minimum: 1, maximum: 40_000 }
+  validates :uri, presence: true, length: { minimum: 1, maximum: 300 }
+  validates :type, presence: true
   validates :author, presence: true
   validates :jet_id, presence: true
 

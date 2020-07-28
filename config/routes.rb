@@ -8,11 +8,11 @@ Rails.application.routes.draw do
   scope module: :api, defaults: { format: :json }, path: 'api' do
     scope module: :v1, constraints: ApiConstraints.new(version: 1, default: true) do
       resources :jets, only: %i[index create update show] do
-        resources :texts, param: :hash_id, only: %i[create update show destroy] do
+        resources :texts, controller: :posts, type: 'Text', param: :hash_id, only: %i[create update show destroy] do
           member do
-            put 'upvote', to: 'texts#upvote'
-            put 'downvote', to: 'texts#downvote'
-            put 'unvote', to: 'texts#unvote'
+            put 'upvote', to: 'posts#upvote'
+            put 'downvote', to: 'posts#downvote'
+            put 'unvote', to: 'posts#unvote'
           end
 
           resources :comments, param: :hash_id, only: %i[create update destroy] do
@@ -24,11 +24,11 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :links, param: :hash_id, only: %i[create update show destroy] do
+        resources :links, controller: :posts, type: 'Link', param: :hash_id, only: %i[create update show destroy] do
           member do
-            put 'upvote', to: 'links#upvote'
-            put 'downvote', to: 'links#downvote'
-            put 'unvote', to: 'links#unvote'
+            put 'upvote', to: 'posts#upvote'
+            put 'downvote', to: 'posts#downvote'
+            put 'unvote', to: 'posts#unvote'
           end
 
           resources :comments, param: :hash_id, only: %i[create update destroy] do
@@ -41,7 +41,16 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :voters, param: :username, only: [:show]
+      resources :voters, param: :username, only: [:show] do
+        member do
+          get 'upvoted', to: 'voters#upvoted'
+          get 'downvoted', to: 'voters#downvoted'
+          get 'post_history', to: 'voters#post_history'
+        end
+
+        resources :saved_posts, only: %i[index create destroy]
+      end
+
       get 'all', to: 'all#all'
     end
   end
