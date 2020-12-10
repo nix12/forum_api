@@ -48,10 +48,11 @@ Rails.application.routes.draw do
           get 'post_history', to: 'voters#post_history'
         end
 
-        resources :saved_posts, only: %i[index create destroy]
+        resources :saved_posts, only: %i[index create show destroy]
+        resources :saved_comments, only: %i[index create destroy]
       end
 
-      get 'all', to: 'all#all'
+      get 'all', to: 'alls#all'
     end
   end
 end

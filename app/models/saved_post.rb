@@ -2,10 +2,8 @@
 
 class SavedPost < ApplicationRecord
   belongs_to :voter
-  belongs_to :post, optional: true
-  belongs_to :comment, optional: true
+  belongs_to :post
 
-  validates :voter, presence: true
-  validates :post, presence: true, uniqueness: true
-  validates :comment, presence: true, uniqueness: true
+  validates :voter_id, presence: true
+  validates :post_id, presence: true
 end

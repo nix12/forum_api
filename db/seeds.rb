@@ -42,26 +42,26 @@ Jet.create(
      description: 'some description' }]
 )
 
-text = Post.create(
+post = Post.create(
   title: 'First text',
   body: 'This is my first text',
   author: voter,
   type: 'Text',
-  jet_id: 'all'
+  jet_id: 'news'
 )
 
 comment = Comment.create(
   body: 'This is a comment of the first text',
   author: voter,
-  text_id: text.id,
+  text_id: post.id,
   commentable_type: Post,
-  commentable_id: text.id,
+  commentable_id: post.id,
   parent_id: nil
 )
 comment2 = Comment.create(
   body: 'This is a comment of the first comment',
   author: voter,
-  text_id: text.id,
+  text_id: post.id,
   commentable_type: Comment,
   commentable_id: comment.id,
   parent_id: comment.id
@@ -69,7 +69,7 @@ comment2 = Comment.create(
 Comment.create(
   body: 'A glorius comment',
   author: voter,
-  text_id: text.id,
+  text_id: post.id,
   commentable_type: Comment,
   commentable_id: comment2.id,
   parent_id: comment2.id
@@ -77,8 +77,8 @@ Comment.create(
 Comment.create(
   body: 'This is a second comment of the first text',
   author: voter,
-  text_id: text.id,
+  text_id: post.id,
   commentable_type: Post,
-  commentable_id: text.id,
+  commentable_id: post.id,
   parent_id: nil
 )
