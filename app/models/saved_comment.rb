@@ -5,5 +5,5 @@ class SavedComment < ApplicationRecord
   belongs_to :comment
 
   validates :voter_id, presence: true
-  validates :comment_id, uniqueness: { scope: :voter_id }
+  validates :comment_id, presence: true
 end

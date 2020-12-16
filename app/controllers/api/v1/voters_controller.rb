@@ -19,6 +19,27 @@ class Api::V1::VotersController < ApplicationController
     render 'voters/post_history.json.jbuilder', status: :ok
   end
 
+  def saved_items
+    @saved_posts = current_user.saved_posts
+    @saved_comments = current_user.saved_comments
+
+    @saved_items = (@saved_posts + @saved_comments).sort_by do |item|
+      [item.created_at]
+    end.reverse!
+
+    @transformed_items = @saved_items.map do |saved|
+      save = if saved.respond_to?(:post)
+               saved.post
+             else
+               saved.comment
+             end
+
+      save
+    end
+
+    render json: { saved_items: @transformed_items }, status: :ok
+  end
+
   private
 
   def set_voter

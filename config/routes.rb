@@ -46,10 +46,11 @@ Rails.application.routes.draw do
           get 'upvoted', to: 'voters#upvoted'
           get 'downvoted', to: 'voters#downvoted'
           get 'post_history', to: 'voters#post_history'
+          get 'saved_items', to: 'voters#saved_items'
         end
 
         resources :saved_posts, only: %i[index create show destroy]
-        resources :saved_comments, only: %i[index create destroy]
+        resources :saved_comments, only: %i[index create show destroy]
       end
 
       get 'all', to: 'alls#all'
