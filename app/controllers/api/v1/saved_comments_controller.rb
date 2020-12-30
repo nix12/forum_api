@@ -18,7 +18,7 @@ class Api::V1::SavedCommentsController < ApplicationController
   end
 
   def show
-    @saved_comment = SavedComment.where(voter_id: params[:voter_id], comment_id: params[:comment_id]).last
+    @saved_comment = SavedComment.where(voter_id: params[:voter_id], comment_id: params[:comment_id]).first
 
     render json: { saved_comment: @saved_comment }, status: :ok
   end
