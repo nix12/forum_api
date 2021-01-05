@@ -22,6 +22,7 @@ class Api::V1::JetsController < ApplicationController
   end
 
   def show
+    @jet = Jet.friendly.find(params[:id])
     @posts = Post.fetch_texts_and_links(@jet)
 
     render 'jets/show.json.jbuilder', status: :ok

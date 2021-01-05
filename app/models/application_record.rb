@@ -3,7 +3,7 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
-  def destroy
+  def shadow_destroy
     voter_id = nil
     body = nil if body
     save!(validate: false)

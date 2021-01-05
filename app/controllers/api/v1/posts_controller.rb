@@ -37,7 +37,7 @@ class Api::V1::PostsController < ApplicationController
   end
 
   def destroy
-    @post.destroy if @post.present?
+    @post.shadow_destroy if @post.present?
   end
 
   def upvote

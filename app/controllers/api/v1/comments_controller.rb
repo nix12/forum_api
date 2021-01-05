@@ -31,7 +31,7 @@ class Api::V1::CommentsController < ApplicationController
   end
 
   def destroy
-    @comment.destroy if @comment.present?
+    @comment.shadow_destroy if @comment.present?
   end
 
   def upvote

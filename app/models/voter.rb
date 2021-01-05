@@ -13,6 +13,8 @@ class Voter < ApplicationRecord
   has_many :posts, through: :saved_posts, source: :posts
   has_many :saved_comments
   has_many :comments, through: :saved_comments, source: :comments
+  has_many :subscriptions
+  has_many :jets, through: :subscriptions
 
   validates :username, uniqueness: true, length: { minimum: 3, maximum: 10 } if :not_deleted_or_removed
 

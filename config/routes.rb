@@ -53,6 +53,7 @@ Rails.application.routes.draw do
         resources :saved_comments, only: %i[index create show destroy]
       end
 
+      resources :subscriptions, only: %i[index create destroy]
       get 'all', to: 'alls#all'
     end
   end

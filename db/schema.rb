@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_24_062610) do
+ActiveRecord::Schema.define(version: 2020_12_30_144452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,7 @@ ActiveRecord::Schema.define(version: 2020_12_24_062610) do
     t.string "slug"
     t.string "voter_id"
     t.text "description"
+    t.integer "subscribers_count", default: 0
     t.index ["slug"], name: "index_jets_on_slug", unique: true
   end
 
@@ -104,6 +105,14 @@ ActiveRecord::Schema.define(version: 2020_12_24_062610) do
     t.string "voter_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.string "jet_id"
+    t.string "voter_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["voter_id"], name: "index_subscriptions_on_voter_id"
   end
 
   create_table "texts", force: :cascade do |t|

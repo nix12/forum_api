@@ -25,7 +25,7 @@ class Api::V1::SavedPostsController < ApplicationController
 
   def destroy
     @saved_post = current_user.saved_posts.find(params[:id])
-    @saved_post&.delete if @saved_post
+    @saved_post&.destroy if @saved_post
   end
 
   private
